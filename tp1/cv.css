@@ -1,0 +1,12 @@
+body{
+	background-color: rgb(241, 156, 206);
+}
+a:hover {
+	color: rgb(7, 146, 46);
+}
+table {
+	background-color: rgb(241, 244, 238);
+}
+.titre{
+	text-align: center;
+}
