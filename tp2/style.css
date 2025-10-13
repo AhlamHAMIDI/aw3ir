@@ -1,0 +1,83 @@
+/* Alignement des champs et du bouton */
+body {
+  background-color: #d9d9d9; /* gris clair pour le fond général */
+}
+.form-group {
+  margin-bottom: 15px;
+}
+
+label {
+  width: 150px;
+  display: inline-block;
+  vertical-align: top;
+}
+
+input {
+  width: 250px;
+  padding: 6px 12px;
+  border-radius: 5px;
+  border: 1px solid gray);
+  font-size: 1rem;
+  box-sizing: border-box;
+}
+
+/* Styles du formulaire */
+form {
+  background-color: #fff;
+  border-radius: 15px;
+  padding: 15px;
+  box-shadow: 0 2px 1px -1px rgba(0, 0, 0, 3), 0 1px 1px #00000024, 0 1px 3px #0000001f;
+}
+
+/* Bouton Envoyer aligné sous les champs */
+.button-container {
+  margin-left: 150px; 
+  margin-top: 20px;
+}
+
+.btn-primary {
+  border-radius: 5px;
+  padding: 6px 12px;
+  background-color: #0d6efd;
+  border-color: #0d6efd;
+  color: #fff;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+/* Autres styles d'emoji et animations comme précédemment */
+.icon-ok {
+  display: none;
+  font-size: 1.2em;
+  margin-left: 8px;
+}
+
+input:valid + .icon-ok {
+  display: inline-block;
+}
+
+@keyframes swoosh {
+  0% {
+    transform: scale(1);
+    box-shadow: 0 0 0px #4caf50;
+  }
+  50% {
+    transform: scale(1.05);
+    box-shadow: 0 0 10px #4caf50;
+  }
+  100% {
+    transform: scale(1);
+    box-shadow: 0 0 0px #4caf50;
+  }
+}
+
+input:valid {
+  animation: swoosh 0.3s ease-in-out;
+  border-color: #4caf50;
+}
+form:invalid input[type="submit"] {
+  background-color: gray;
+}
+input:invalid + .icon-ok {
+  display: none;
+}
