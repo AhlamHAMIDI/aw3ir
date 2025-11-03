@@ -50,7 +50,7 @@ window.onload = function () {
         var myModal = new bootstrap.Modal(document.getElementById("myModal"));
         myModal.show();
 
-        // Remplir le modal avec les informations utilisateur
+        //  Remplir le modal avec les informations utilisateur
         document.getElementById("modalBody").innerHTML = `
           <a href="http://maps.google.com/maps?q=${address}" target="_blank">
             <img src="https://maps.googleapis.com/maps/api/staticmap?markers=${address}&zoom=14&size=400x300&scale=2&key=AIzaSyAkmvI9DazzG9p77IShsz_Di7-5Qn7zkcg" alt="Google Maps">
