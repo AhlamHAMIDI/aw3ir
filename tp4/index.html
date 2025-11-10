@@ -1,39 +1,71 @@
-<!doctype html>
-<html>
-
+<!DOCTYPE html>
+<html lang="en">
 <head>
-    <meta charset="utf-8">
-    <meta http-equiv="x-ua-compatible" content="ie=edge">
-    <title>TP4</title>
-    <meta name="description" content="">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-
-    <link rel="apple-touch-icon" href="apple-touch-icon.png">
-    <!-- Place favicon.ico in the root directory -->
-
-    <style>
-        body {
-            background-color: #e9ebee;
-            font-family: system, -apple-system, ".SFNSText-Regular", "San Francisco", "Roboto", "Segoe UI", "Helvetica Neue", "Lucida Grande", sans-serif;
-            font-size: 16px;
-            margin: 0 auto;
-            max-width: 800px;
-        }
-    </style>
-
-    <!-- Code à dé-commenter si besoin de fichier CSS ou JS -->
-    <!--<link rel="stylesheet" href="style.css">-->
-    <!--<script src="main.js"></script>-->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TP AW #4</title>
+  <link rel="stylesheet" href="css/bootstrap.css">
+  <script src="js/bootstrap.bundle.js"></script>
+  <script src="js/gps.js"></script>
+  <script src="js/form-validation.js"></script>
+  <script src="js/store.js"></script>
 </head>
-
 <body>
-    <nav>
-        <a href="..">🏠 Index</a> / TP4
-    </nav>
-    <h1>TP4</h1>
-    <!-- Add your site or application content here -->
-    <p>Hello world! This is HTML5 Boilerplate.</p>
-    <img src="../galilee.png" alt="Logo Galilee" />
+    <div class="container">
+        <h1>Ajouter un contact</h1>
+        <form id="contactForm">
+          <div class="mb-3">
+            <label for="lastName" class="form-label">Nom</label>
+            <input type="text" class="form-control" id="lastName" onkeyup="calcNbChar('lastName')" required>
+            <span class="char-count"></span>
+          </div>
+          <div class="mb-3">
+            <label for="firstName" class="form-label">Prénom</label>
+            <input type="text" class="form-control" id="firstName" onkeyup="calcNbChar('firstName')" required>
+            <span class="char-count"></span>
+          </div>
+          <div class="mb-3">
+            <label for="birthday" class="form-label">Date de naissance</label>
+            <input type="date" class="form-control" id="birthday" required>
+            <span class="char-count"></span>
+          </div>
+          <div class="mb-3">
+            <label for="address" class="form-label">Adresse</label>
+            <div class="input-group">
+              <input type="text" class="form-control" id="address" onkeyup="calcNbChar('address')" required>
+              <button type="button" class="btn btn-warning" onclick="getLocation()">GPS</button>
+            </div>
+            <span class="char-count"></span>
+          </div>
+          
+          <div id="map" class="mb-3"></div>
+          <div class="mb-3">
+            <label for="email" class="form-label">Mail</label>
+            <input type="email" class="form-control" id="email" onkeyup="calcNbChar('email')" required>
+            <span class="char-count"></span>
+          </div>
+          <button type="submit" class="btn btn-primary">Ajouter</button>
+        </form>
+      
+        <div id="successMessage" class="alert alert-success mt-3 d-none" role="alert">
+          Contact ajouté avec succès.
+        </div>
+      
+        <h2 class="mt-5">Liste des contacts</h2>
+        <button class="btn btn-danger mb-3" onclick="resetContacts()">Reset</button>
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Nom</th>
+              <th>Prénom</th>
+              <th>Date de naissance</th>
+              <th>Adresse</th>
+              <th>Mail</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+      
 </body>
-
 </html>
