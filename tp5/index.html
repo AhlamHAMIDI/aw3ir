@@ -1,39 +1,184 @@
-<!doctype html>
-<html>
-
+<!DOCTYPE html>
+<html lang="fr">
 <head>
-    <meta charset="utf-8">
-    <meta http-equiv="x-ua-compatible" content="ie=edge">
-    <title>TP5</title>
-    <meta name="description" content="">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-
-    <link rel="apple-touch-icon" href="apple-touch-icon.png">
-    <!-- Place favicon.ico in the root directory -->
-
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Application Météo</title>
+    
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="css/bootstrap.css">
+    
+    <!-- Weather Icons CSS -->
+    <link rel="stylesheet" href="css/weather-icons.min.css">
+    
     <style>
         body {
-            background-color: #e9ebee;
-            font-family: system, -apple-system, ".SFNSText-Regular", "San Francisco", "Roboto", "Segoe UI", "Helvetica Neue", "Lucida Grande", sans-serif;
-            font-size: 16px;
-            margin: 0 auto;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px 0;
+        }
+        #weatherApp {
             max-width: 800px;
+            margin: 0 auto;
+        }
+        .card {
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            margin: 20px 0;
+        }
+        .list-group-item {
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        .list-group-item:hover {
+            background-color: #f8f9fa;
+        }
+        .weather-card {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+        .temp-display {
+            font-size: 3rem;
+            font-weight: bold;
+        }
+        .btn-location {
+            margin-top: 10px;
         }
     </style>
-
-    <!-- Code à dé-commenter si besoin de fichier CSS ou JS -->
-    <!--<link rel="stylesheet" href="style.css">-->
-    <!--<script src="main.js"></script>-->
 </head>
-
 <body>
-    <nav>
-        <a href="..">🏠 Index</a> / TP5
-    </nav>
-    <h1>TP5</h1>
-    <!-- Add your site or application content here -->
-    <p>Hello world! This is HTML5 Boilerplate.</p>
-    <img src="../galilee.png" alt="Logo Galilee" />
-</body>
+    <div id="weatherApp" class="container">
+        <div class="card">
+            <div class="card-body">
+                <h1 class="text-center mb-4">🌤️ Application Météo 🌤️ </h1>
+                
+                <!-- Formulaire de saisie de ville -->
+                <form v-on:submit="addCity">
+                    <div class="input-group mb-2">
+                        <input
+                            type="search"
+                            class="form-control"
+                            v-model="formCityName"
+                            placeholder="Entrez le nom d'une ville..."
+                            aria-label="Recherche de ville"
+                            autofocus
+                            required
+                        />
+                        <button class="btn btn-primary" type="submit">Rechercher</button>
+                    </div>
+                    <small class="text-muted">{{ formCityName.length }} caractères</small>
+                    
+                    <div class="alert alert-danger mt-2" role="alert" v-if='messageForm != ""'>
+                        {{ messageForm }}
+                    </div>
+                </form>
 
+                <!-- Bouton Ma Position -->
+                <button class="btn btn-success btn-location w-100" v-on:click="getMyPosition">
+                    📍 Ma position
+                </button>
+
+                <!-- Message général -->
+                <div class="alert alert-info mt-3" role="alert" v-if='message != ""'>
+                    {{ message }}
+                </div>
+            </div>
+        </div>
+
+        <!-- Liste des villes -->
+        <div class="card">
+            <div class="card-header">
+                <h4 class="mb-0">Liste des villes ({{ cityList.length }})</h4>
+            </div>
+            <ul class="list-group list-group-flush">
+                <li
+                    v-for="(city, index) in cityList"
+                    v-bind:key="index"
+                    v-on:click="meteo(city)"
+                    class="list-group-item d-flex justify-content-between align-items-center"
+                >
+                    {{ city.name }}
+                    <button
+                        v-on:click.stop="remove(city)"
+                        class="btn btn-danger btn-sm"
+                        title="Supprimer de la liste"
+                    >
+                        ✕
+                    </button>
+                </li>
+            </ul>
+            <div class="card-body" v-if="cityList.length == 0">
+                <div class="alert alert-warning mb-0" role="alert">
+                    Aucune ville saisie ! Ajoutez une ville pour voir la météo.
+                </div>
+            </div>
+        </div>
+
+        <!-- Chargement de la météo -->
+        <div v-if="cityWeatherLoading" class="text-center mt-4">
+            <div class="spinner-border text-light" role="status">
+                <span class="visually-hidden">Chargement...</span>
+            </div>
+            <p class="text-white mt-2">Chargement de la météo...</p>
+        </div>
+
+        <!-- Affichage de la météo -->
+        <div v-if="cityWeather" class="weather-card">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="mb-0">{{ cityWeather.name }} - {{ cityWheaterDate }}</h3>
+                </div>
+                
+                <!-- Carte OpenStreetMap -->
+                <iframe
+                    class="card-img-top"
+                    width="100%"
+                    height="250"
+                    frameborder="0"
+                    scrolling="no"
+                    v-bind:src="'https://www.openstreetmap.org/export/embed.html?bbox=' + openStreetMapArea + '&layer=mapnik&marker=' + cityWeather.coord.lat + '%2C' + cityWeather.coord.lon"
+                >
+                </iframe>
+
+                <div class="card-body text-center">
+                    <div class="temp-display">
+                        <i v-bind:class="'wi wi-owm-day-' + cityWeather.weather[0].id"></i>
+                        {{ Math.round(cityWeather.main.temp) }}°C
+                    </div>
+                    <p class="lead">{{ cityWeather.weather[0].description }}</p>
+                    <p class="text-muted">
+                        Ressenti: {{ Math.round(cityWeather.main.feels_like) }}°C
+                    </p>
+                </div>
+
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item">
+                        <i class="wi wi-cloud"></i> Nuages: {{ cityWeather.clouds.all }}%
+                    </li>
+                    <li class="list-group-item">
+                        <i class="wi wi-humidity"></i> Humidité: {{ cityWeather.main.humidity }}%
+                    </li>
+                    <li class="list-group-item">
+                        <i class="wi wi-strong-wind"></i> Vent: {{ Math.round(cityWeather.wind.speed * 3.6) }} km/h
+                    </li>
+                    <li class="list-group-item">
+                        <i class="wi wi-barometer"></i> Pression: {{ cityWeather.main.pressure }} hPa
+                    </li>
+                    <li class="list-group-item">
+                        <i class="wi wi-sunrise"></i> Lever du soleil: {{ cityWheaterSunrise }}
+                    </li>
+                    <li class="list-group-item">
+                        <i class="wi wi-sunset"></i> Coucher du soleil: {{ cityWheaterSunset }}
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/libs/vue.js"></script>
+    <script src="js/libs/bootstrap.bundle.js"></script>
+    <script src="js/main.js"></script>
+</body>
 </html>
